@@ -1,13 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Menu } from "lucide-react"
+import { Menu, ListOrdered } from "lucide-react"
+import { useUser, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Link from "next/link"
+import AuthModal from "@/components/auth-modal"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const { isSignedIn, user } = useUser()
 
   const navItems = [
     { label: "Home", href: "#" },
@@ -35,11 +39,11 @@ export default function Navbar() {
               w-8 h-8 rounded-lg 
               bg-white/10 border border-white/30 
               flex items-center justify-center 
-              text-white font-bold text-sm
+              text-white
               shadow-[0_0_18px_rgba(0,0,0,0.35)]
             "
           >
-            Q
+            <ListOrdered className="w-5 h-5" />
           </div>
           <span className="font-bold text-lg text-white tracking-tight">
             QueueX
@@ -70,29 +74,45 @@ export default function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Button
-            variant="ghost"
-            className="
-              text-sm font-bold text-white/90 
-              hover:text-white hover:bg-white/10
-              transition-all duration-200
-              hover:scale-105
-            "
-          >
-            Login
-          </Button>
-          <Button
-            className="
-              text-sm font-bold text-[color:oklch(0.25_0.09_150)]
-              bg-white
-              hover:bg-[color:oklch(0.93_0.04_150)]
-              transition-all duration-200
-              hover:scale-105
-              shadow-[0_0_20px_rgba(255,255,255,0.55)]
-            "
-          >
-            Get Started
-          </Button>
+          {isSignedIn ? (
+            <UserButton 
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9",
+                  footer: "hidden",
+                  footerAction: "hidden",
+                }
+              }}
+            />
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="
+                  text-sm font-bold text-white/90 
+                  hover:text-white hover:bg-white/10
+                  transition-all duration-200
+                  hover:scale-105
+                "
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="
+                  text-sm font-bold text-[color:oklch(0.25_0.09_150)]
+                  bg-white
+                  hover:bg-[color:oklch(0.93_0.04_150)]
+                  transition-all duration-200
+                  hover:scale-105
+                  shadow-[0_0_20px_rgba(255,255,255,0.55)]
+                "
+              >
+                Get Started
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu */}
@@ -139,34 +159,59 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 border-t border-white/20 flex flex-col gap-3">
-                <Button
-                  variant="outline"
-                  className="
-                    w-full bg-transparent border-white/60 text-white font-bold
-                    hover:bg-white/10 hover:border-white
-                    transition-all duration-200
-                    hover:scale-105
-                  "
-                >
-                  Login
-                </Button>
-                <Button
-                  className="
-                    w-full font-bold text-[color:oklch(0.25_0.09_150)]
-                    bg-white
-                    hover:bg-[color:oklch(0.93_0.04_150)]
-                    transition-all duration-200
-                    hover:scale-105
-                    shadow-[0_0_20px_rgba(255,255,255,0.55)]
-                  "
-                >
-                  Get Started
-                </Button>
+                {isSignedIn ? (
+                  <div className="flex items-center justify-center">
+                    <UserButton 
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-9 h-9",
+                          footer: "hidden",
+                          footerAction: "hidden",
+                        }
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsAuthModalOpen(true)
+                        setIsOpen(false)
+                      }}
+                      className="
+                        w-full bg-transparent border-white/60 text-white font-bold
+                        hover:bg-white/10 hover:border-white
+                        transition-all duration-200
+                        hover:scale-105
+                      "
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsAuthModalOpen(true)
+                        setIsOpen(false)
+                      }}
+                      className="
+                        w-full font-bold text-[color:oklch(0.25_0.09_150)]
+                        bg-white
+                        hover:bg-[color:oklch(0.93_0.04_150)]
+                        transition-all duration-200
+                        hover:scale-105
+                        shadow-[0_0_20px_rgba(255,255,255,0.55)]
+                      "
+                    >
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>
         </Sheet>
       </div>
+      <AuthModal open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen} />
     </nav>
   )
 }

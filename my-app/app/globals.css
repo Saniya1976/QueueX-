@@ -184,3 +184,17 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+/* OTP Input caret animation */
+@keyframes caret-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-caret-blink {
+  animation: caret-blink 1s infinite;
+}
