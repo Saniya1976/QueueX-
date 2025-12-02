@@ -71,17 +71,17 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
     const handleEmailSignIn = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!signInLoaded) return
-
+    
         setIsLoading(true)
         setError("")
         setSuccess("")
-
+    
         try {
             const result = await signIn.create({
                 identifier: email,
                 password,
             })
-
+    
             if (result.status === "complete") {
                 if (setActive) {
                     await setActive({ session: result.createdSessionId })
@@ -89,7 +89,11 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 setSuccess("Successfully signed in!")
                 setTimeout(() => {
                     onOpenChange(false)
-                    router.push("/")
+                    if (userType === "company") {
+                        router.push("/company-home")
+                    } else {
+                        router.push("/home")
+                    }
                     router.refresh()
                 }, 1000)
             } else if (result.status === "needs_second_factor") {
@@ -101,21 +105,21 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
             setIsLoading(false)
         }
     }
-
+    
     const handleEmailSignUp = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!signUpLoaded) return
-
+    
         setIsLoading(true)
         setError("")
         setSuccess("")
-
+    
         try {
             const result = await signUp.create({
                 emailAddress: email,
                 password,
             })
-
+    
             if (result.status === "complete") {
                 if (setActive) {
                     await setActive({ session: result.createdSessionId })
@@ -123,7 +127,11 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 setSuccess("Account created successfully!")
                 setTimeout(() => {
                     onOpenChange(false)
-                    router.push("/")
+                    if (userType === "company") {
+                        router.push("/company-home")
+                    } else {
+                        router.push("/home")
+                    }
                     router.refresh()
                 }, 1000)
             } else {
@@ -138,20 +146,20 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
             setIsLoading(false)
         }
     }
-
+    
     const handleVerification = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!signUpLoaded) return
-
+    
         setIsLoading(true)
         setError("")
         setSuccess("")
-
+    
         try {
             const result = await signUp.attemptEmailAddressVerification({
                 code: verificationCode,
             })
-
+    
             if (result.status === "complete") {
                 if (setActive) {
                     await setActive({ session: result.createdSessionId })
@@ -159,7 +167,11 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 setSuccess("Email verified! Welcome to QueueX!")
                 setTimeout(() => {
                     onOpenChange(false)
-                    router.push("/")
+                    if (userType === "company") {
+                        router.push("/company-home")
+                    } else {
+                        router.push("/home")
+                    }
                     router.refresh()
                 }, 1500)
             } else {
@@ -171,31 +183,31 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
             setIsLoading(false)
         }
     }
-
+    
     const handleGoogleSignIn = async () => {
         if (!signInLoaded) return
-
+    
         setIsLoading(true)
         setError("")
-
+    
         try {
             await signIn.authenticateWithRedirect({
                 strategy: "oauth_google",
-                redirectUrl: "/sso-callback",
-                redirectUrlComplete: "/",
+                redirectUrl: "/sso-callback", // temporary landing page
+                redirectUrlComplete: "/",     // fallback
             })
         } catch (err: any) {
             setError(err.errors?.[0]?.message || "Failed to sign in with Google")
             setIsLoading(false)
         }
     }
-
+    
     const handleGoogleSignUp = async () => {
         if (!signUpLoaded) return
-
+    
         setIsLoading(true)
         setError("")
-
+    
         try {
             await signUp.authenticateWithRedirect({
                 strategy: "oauth_google",
@@ -207,6 +219,7 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
             setIsLoading(false)
         }
     }
+    
 
     const handleBack = () => {
         if (showVerification) {

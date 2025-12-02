@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "app/api/queue/create/route.js", "lib/prisma.ts"  ],
   "exclude": [
     "node_modules"
   ]
