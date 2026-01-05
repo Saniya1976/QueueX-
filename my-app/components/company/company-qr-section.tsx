@@ -1,6 +1,6 @@
 'use client';
 
-import CounterQRManager from '@/components/CounterQRManager.tsx';
+import CounterQRManager from '@/components/CounterQRManager';
 
 export function CompanyQrSection() {
   return (

@@ -2,11 +2,13 @@
 import { CompanyOverviewCard } from "@/components/company/company-overview-card";
 import { CompanyStats } from "@/components/company/company-stats";
 import { CompanyCustomerTracking } from "@/components/company/company-customer-tracking";
+import { CompanyQrSection } from "@/components/company/company-qr-section";
 
 export default function CompanyDashboardPage() {
   return (
     <div className="space-y-10">
       <CompanyOverviewCard />
+      <CompanyQrSection/>
       <CompanyStats />
       <CompanyCustomerTracking />
     </div>
