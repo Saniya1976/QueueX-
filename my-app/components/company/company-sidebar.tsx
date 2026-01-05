@@ -1,15 +1,40 @@
+// components/company/company-sidebar.tsx
 import Link from "next/link";
+import { LayoutDashboard, Users, List, Settings } from "lucide-react";
+
+const navItems = [
+  { label: "Dashboard", href: "/company", icon: LayoutDashboard },
+  { label: "Queues", href: "/company/queues", icon: List },
+  { label: "Customers", href: "/company/customers", icon: Users },
+  { label: "Settings", href: "/company/settings", icon: Settings },
+];
 
 export function CompanySidebar() {
   return (
-    <aside className="w-64 border-r bg-sidebar p-6 space-y-6">
-      <h2 className="text-lg font-bold">QueueX</h2>
+    <aside className="w-64 border-r bg-sidebar px-6 py-8 flex flex-col gap-8">
+      {/* Logo */}
+      <div className="text-xl font-bold text-primary">
+        QueueX
+      </div>
 
-      <nav className="space-y-3">
-        <Link href="/company">Dashboard</Link>
-        <Link href="/company/queues">Queues</Link>
-        <Link href="/company/customers">Customers</Link>
-        <Link href="/company/settings">Settings</Link>
+      {/* Navigation */}
+      <nav className="flex flex-col gap-2">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="
+              flex items-center gap-3 rounded-lg px-3 py-2
+              text-sm font-medium
+              text-foreground/80
+              hover:bg-sidebar-accent hover:text-foreground
+              transition
+            "
+          >
+            <item.icon className="h-4 w-4" />
+            {item.label}
+          </Link>
+        ))}
       </nav>
     </aside>
   );
