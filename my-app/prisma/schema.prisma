@@ -1,37 +1,52 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users     User[]
+  queues    Queue[]
 }
 
 model User {
   id        String      @id @default(uuid())
-  clerkId   String      @unique        // store Clerk's user ID
+  clerkId   String      @unique
   name      String?
   email     String?
   role      String      @default("customer")
+
+  companyId String?
+  company   Company?    @relation(fields: [companyId], references: [id])
+
   queues    QueueEntry[]
   createdAt DateTime    @default(now())
 }
 
-
 model Queue {
   id        String       @id @default(cuid())
   name      String
-  createdBy String
+  companyId String
   createdAt DateTime     @default(now())
+
+  company   Company      @relation(fields: [companyId], references: [id])
   entries   QueueEntry[]
 }
 
 model QueueEntry {
-  id      String @id @default(cuid())
-  queueId String
-  userId  String
+  id        String   @id @default(cuid())
+  queueId   String
+  userId    String
+  joinedAt DateTime @default(now())
 
   queue Queue @relation(fields: [queueId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
-
-  joinedAt DateTime @default(now())
 }
